@@ -5,6 +5,7 @@ import heapq
 #    COLORES Y CONST
 # =====================
 WHITE = (255, 255, 255)
+YELLOW = (255, 255, 0)
 BLACK = (0, 0, 0)
 BLUE  = (0, 0, 255)
 
@@ -96,20 +97,30 @@ class WarehouseMap:
         """
         Dibuja el mapa en la superficie 'surface' de Pygame.
         """
+        big_font = pygame.font.SysFont(None, 30)
         surface.fill(WHITE)
         for r in range(self.rows):
             for c in range(self.cols):
                 cell = self.grid[r][c]
-                # Fondo blanco si '.' o 'C'; negro si 'X'
-                color = WHITE if cell in ('.','C') else BLACK
+                if cell == 'C':
+                    color = YELLOW
+                elif cell == '.':
+                    color = WHITE
+                else:
+                    color = BLACK
                 pygame.draw.rect(surface, color, (c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE))
                 # Borde
                 pygame.draw.rect(surface, BLACK, (c*TILE_SIZE, r*TILE_SIZE, TILE_SIZE, TILE_SIZE), 1)
 
+                if cell == 'C':
+                    text_surf = big_font.render("C", True, BLACK)
+                    rect = text_surf.get_rect(center=(c*TILE_SIZE + TILE_SIZE/2, r*TILE_SIZE + TILE_SIZE/2))
+                    surface.blit(text_surf, rect)
+
                 # Dibujar el número de la estantería (si existe)
                 if (r, c) in self.pos_estanterias:
                     num_est = self.pos_estanterias[(r, c)]
-                    text_surf = font.render(num_est, True, (255, 255, 255))
+                    text_surf = font.render(num_est, True, WHITE)
                     rect = text_surf.get_rect(center=(
                         c*TILE_SIZE + TILE_SIZE/2,
                         r*TILE_SIZE + TILE_SIZE/2
