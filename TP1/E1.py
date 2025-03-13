@@ -38,8 +38,8 @@ class WarehouseMap:
     def _crear_mapa(self):
         # Crear mapa lleno de '.'
         self.grid = [['.' for _ in range(self.cols)] for _ in range(self.rows)]
-        # Marcar zona de carga 'C' en (3, 0)
-        self.grid[3][0] = 'C'
+        # Marcar zona de carga 'C' en (5, 0)
+        self.grid[5][0] = 'C'
         # Añadir bloques de estanterías 'X'
         # Estanterías superiores (filas 1..4)
         for r in range(1, 5):
@@ -123,7 +123,7 @@ class WarehouseMap:
         if not ubicacion:
             return None
         x, y = ubicacion
-        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        for dx, dy in [(0, -1), (0, 1)]:
             nx, ny = x + dx, y + dy
             if (0 <= nx < self.rows and 0 <= ny < self.cols
                     and self.grid[nx][ny] == '.'):
@@ -232,7 +232,7 @@ class AlmacenGame:
         
         # Leer posición inicial y estantería solicitada (simulando lo que antes se hacía con input())
         self.inicio = (5, 0)  # Valor por defecto
-        self.estanteria_deseada = "32"  # Por defecto
+        self.estanteria_deseada = "11"  # Por defecto
         
         # Montacargas
         self.montacargas = Montacargas(posicion_inicial=self.inicio)
