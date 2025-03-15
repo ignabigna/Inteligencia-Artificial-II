@@ -7,12 +7,11 @@ AMARILLO = (255, 255, 0)
 NEGRO = (0, 0, 0)
 AZUL = (0, 0, 255)
 
-TAMANO_CELDA = 50
-
 class Tablero:
     def __init__(self, filas, columnas):
         self.filas = filas
         self.columnas = columnas
+        self.tamano_celda = 70
         self.grid = [[Casilla() for _ in range(columnas)] for _ in range(filas)]
         self.posicion = {}
         self.estanteriaCarga()
@@ -86,14 +85,14 @@ class Tablero:
                 elif casilla.tipo == "E":
                     color = NEGRO
 
-                pygame.draw.rect(pantalla, color, (columna * TAMANO_CELDA, fila * TAMANO_CELDA, TAMANO_CELDA, TAMANO_CELDA))
-                pygame.draw.rect(pantalla, NEGRO, (columna * TAMANO_CELDA, fila * TAMANO_CELDA, TAMANO_CELDA, TAMANO_CELDA), 1)
+                pygame.draw.rect(pantalla, color, (columna * self.tamano_celda, fila * self.tamano_celda, self.tamano_celda, self.tamano_celda))
+                pygame.draw.rect(pantalla, NEGRO, (columna * self.tamano_celda, fila * self.tamano_celda, self.tamano_celda, self.tamano_celda), 1)
 
                 if casilla.tipo == "C":
                     texto = fuente.render("C", True, NEGRO)
-                    texto_rect = texto.get_rect(center = (columna * TAMANO_CELDA + TAMANO_CELDA // 2, fila * TAMANO_CELDA + TAMANO_CELDA // 2))
+                    texto_rect = texto.get_rect(center = (columna * self.tamano_celda + self.tamano_celda // 2, fila * self.tamano_celda + self.tamano_celda // 2))
                     pantalla.blit(texto, texto_rect)
                 elif casilla.tipo == "E" and casilla.contenido is not None:
                     texto = fuente.render(str(casilla.contenido), True, BLANCO)
-                    texto_rect = texto.get_rect(center = (columna * TAMANO_CELDA + TAMANO_CELDA // 2, fila * TAMANO_CELDA + TAMANO_CELDA // 2))
+                    texto_rect = texto.get_rect(center = (columna * self.tamano_celda + self.tamano_celda // 2, fila * self.tamano_celda + self.tamano_celda // 2))
                     pantalla.blit(texto, texto_rect)

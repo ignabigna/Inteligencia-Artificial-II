@@ -5,6 +5,8 @@ import pygame
 import threading
 from BG_Tablero import Tablero, AStar
 
+AGENTE_IMG_PATH = "TP1/Imagenes/Rick.png"
+
 class InterfazUsuario(QWidget):
     llegada_signal = pyqtSignal()
 
@@ -12,8 +14,12 @@ class InterfazUsuario(QWidget):
         super().__init__()
         self.initUI()
         self.tablero = Tablero(11, 13)
+        self.tamano_celda = self.tablero.tamano_celda
         self.agente_pos = None
         self.llegada_signal.connect(self.mensajeLlegada)
+        self.imagen_agente = pygame.image.load(AGENTE_IMG_PATH)
+        self.imagen_agente = pygame.transform.scale(self.imagen_agente, (self.tamano_celda, self.tamano_celda))
+        self.estanterias_visitadas = set()
 
     def initUI(self):
         self.setWindowTitle("Menu de Recoleccion de Paquetes")
@@ -58,18 +64,12 @@ class InterfazUsuario(QWidget):
         if ok and coordenadas:
             try:
                 fila, columna = map(int, coordenadas.split(","))
-
-                if self.tablero.grid[fila][columna].tipo == "E":
-                    self.mostrarMensaje("No puede colocar el agente en una estantería. Elija otra casilla.")
-                    return
-
                 if self.tablero.transitable(fila, columna):
                     self.agente_pos = (fila, columna)
                     self.tablero.posicionAgente("A", fila, columna)
                     self.mostrarMensaje(f"El agente ha sido colocado en ({fila}, {columna}). Ahora seleccione una estantería.")
                 else:
                     self.mostrarMensaje("Casilla no válida. Debe ser una casilla recorrible.")
-
             except ValueError:
                 self.mostrarMensaje("Entrada inválida. Ingrese números separados por una coma.")
 
@@ -86,8 +86,11 @@ class InterfazUsuario(QWidget):
             return
 
         numero_estanteria = int(numero_estanteria)
-        estanteria_objetivo = None
+        if numero_estanteria in self.estanterias_visitadas:
+            self.mostrarMensaje("Esta estantería ya ha sido visitada. Seleccione otra.")
+            return
 
+        estanteria_objetivo = None
         for fila in range(self.tablero.filas):
             for columna in range(self.tablero.columnas):
                 casilla = self.tablero.grid[fila][columna]
@@ -103,23 +106,20 @@ class InterfazUsuario(QWidget):
         if not destino:
             self.mostrarMensaje("No hay una casilla recorrible junto a la estantería.")
             return
-        
-        if self.agente_pos == destino:
-            self.mostrarMensaje("Ya se encuentra en esta estantería. Seleccione otra diferente.")
-            return
 
         camino = AStar.buscar_camino(self.tablero, self.agente_pos, destino)
         if not camino:
             self.mostrarMensaje("No se encontró un camino hacia la estantería.")
             return
 
+        self.estanterias_visitadas.add(numero_estanteria)
         threading.Thread(target=self.simularMovimiento, args=(camino,), daemon=True).start()
 
     def simularMovimiento(self, camino):
         pygame.quit()
         pygame.init()
-        pantalla = pygame.display.set_mode((650, 550))
-        pygame.display.set_caption("Movimiento del ")
+        pantalla = pygame.display.set_mode((900, 750))
+        pygame.display.set_caption("Movimiento del Recolector")
         reloj = pygame.time.Clock()
         corriendo = True
 
@@ -136,6 +136,7 @@ class InterfazUsuario(QWidget):
                 self.agente_pos = (paso[0], paso[1])
                 pantalla.fill((0, 0, 0))
                 self.tablero.dibujarTablero(pantalla)
+                pantalla.blit(self.imagen_agente, (self.agente_pos[1] * self.tamano_celda, self.agente_pos[0] * self.tamano_celda))
                 pygame.display.flip()
                 pygame.time.delay(300)
                 reloj.tick(30)
@@ -149,6 +150,7 @@ class InterfazUsuario(QWidget):
 
     def reiniciarSimulacion(self):
         self.agente_pos = None
+        self.estanterias_visitadas.clear()
         self.tablero = Tablero(11, 13)
         self.mostrarMensaje("Simulación reiniciada. Seleccione el inicio del agente.")
 
