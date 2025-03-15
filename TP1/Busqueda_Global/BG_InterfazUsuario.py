@@ -13,7 +13,7 @@ class InterfazUsuario(QWidget):
         self.initUI()
         self.tablero = Tablero(11, 13)
         self.agente_pos = None
-        self.llegada_signal.connect(self.mensaje_llegada)
+        self.llegada_signal.connect(self.mensajeLlegada)
 
     def initUI(self):
         self.setWindowTitle("Menu de Recoleccion de Paquetes")
@@ -25,11 +25,11 @@ class InterfazUsuario(QWidget):
         layout.addWidget(self.label_pregunta)
 
         self.boton_carga = QPushButton("Zona de carga")
-        self.boton_carga.clicked.connect(lambda: self.iniciar_agente("C"))
+        self.boton_carga.clicked.connect(lambda: self.iniciarAgente("C"))
         layout.addWidget(self.boton_carga)
 
         self.boton_manual = QPushButton("Seleccionar otra casilla")
-        self.boton_manual.clicked.connect(self.pedir_coordenadas)
+        self.boton_manual.clicked.connect(self.pedirCoordenadas)
         layout.addWidget(self.boton_manual)
 
         self.label_estanteria = QLabel("Ingrese número de estantería a visitar:")
@@ -38,51 +38,51 @@ class InterfazUsuario(QWidget):
         layout.addWidget(self.input_estanteria)
 
         self.boton_iniciar = QPushButton("Iniciar recorrido")
-        self.boton_iniciar.clicked.connect(self.iniciar_recorrido)
+        self.boton_iniciar.clicked.connect(self.iniciarRecorrido)
         layout.addWidget(self.boton_iniciar)
 
         self.boton_reiniciar = QPushButton("Reiniciar")
-        self.boton_reiniciar.clicked.connect(self.reiniciar_simulacion)
+        self.boton_reiniciar.clicked.connect(self.reiniciarSimulacion)
         layout.addWidget(self.boton_reiniciar)
 
         self.setLayout(layout)
 
-    def iniciar_agente(self, opcion):
+    def iniciarAgente(self, opcion):
         if opcion == "C":
             self.agente_pos = (5, 0)
             self.tablero.posicionAgente("A", 5, 0)
-        self.mostrar_mensaje("El agente ha sido colocado en la zona de carga. Ahora seleccione una estantería.")
+        self.mostrarMensaje("El agente ha sido colocado en la zona de carga. Ahora seleccione una estantería.")
 
-    def pedir_coordenadas(self):
+    def pedirCoordenadas(self):
         coordenadas, ok = QInputDialog.getText(self, "Ingresar coordenadas", "Ingrese fila y columna separadas por una coma:")
         if ok and coordenadas:
             try:
                 fila, columna = map(int, coordenadas.split(","))
 
                 if self.tablero.grid[fila][columna].tipo == "E":
-                    self.mostrar_mensaje("No puede colocar el agente en una estantería. Elija otra casilla.")
+                    self.mostrarMensaje("No puede colocar el agente en una estantería. Elija otra casilla.")
                     return
 
                 if self.tablero.transitable(fila, columna):
                     self.agente_pos = (fila, columna)
                     self.tablero.posicionAgente("A", fila, columna)
-                    self.mostrar_mensaje(f"El agente ha sido colocado en ({fila}, {columna}). Ahora seleccione una estantería.")
+                    self.mostrarMensaje(f"El agente ha sido colocado en ({fila}, {columna}). Ahora seleccione una estantería.")
                 else:
-                    self.mostrar_mensaje("Casilla no válida. Debe ser una casilla recorrible.")
+                    self.mostrarMensaje("Casilla no válida. Debe ser una casilla recorrible.")
 
             except ValueError:
-                self.mostrar_mensaje("Entrada inválida. Ingrese números separados por una coma.")
+                self.mostrarMensaje("Entrada inválida. Ingrese números separados por una coma.")
 
-    def iniciar_recorrido(self):
+    def iniciarRecorrido(self):
         if not self.agente_pos:
-            self.mostrar_mensaje("Debe colocar al agente primero.")
+            self.mostrarMensaje("Debe colocar al agente primero.")
             return
 
         self.tablero.reiniciarTablero()
 
         numero_estanteria = self.input_estanteria.text()
         if not numero_estanteria.isdigit():
-            self.mostrar_mensaje("Ingrese un número de estantería válido.")
+            self.mostrarMensaje("Ingrese un número de estantería válido.")
             return
 
         numero_estanteria = int(numero_estanteria)
@@ -96,29 +96,30 @@ class InterfazUsuario(QWidget):
                     break
 
         if not estanteria_objetivo:
-            self.mostrar_mensaje("No se encontró la estantería con ese número.")
+            self.mostrarMensaje("No se encontró la estantería con ese número.")
             return
 
         destino = self.tablero.encontrarEstanteria(*estanteria_objetivo)
         if not destino:
-            self.mostrar_mensaje("No hay una casilla recorrible junto a la estantería.")
+            self.mostrarMensaje("No hay una casilla recorrible junto a la estantería.")
             return
         
         if self.agente_pos == destino:
-            self.mostrar_mensaje("Ya se encuentra en esta estantería. Seleccione otra diferente.")
+            self.mostrarMensaje("Ya se encuentra en esta estantería. Seleccione otra diferente.")
             return
 
         camino = AStar.buscar_camino(self.tablero, self.agente_pos, destino)
         if not camino:
-            self.mostrar_mensaje("No se encontró un camino hacia la estantería.")
+            self.mostrarMensaje("No se encontró un camino hacia la estantería.")
             return
 
-        threading.Thread(target=self.simular_movimiento, args=(camino,), daemon=True).start()
+        threading.Thread(target=self.simularMovimiento, args=(camino,), daemon=True).start()
 
-    def simular_movimiento(self, camino):
+    def simularMovimiento(self, camino):
+        pygame.quit()
         pygame.init()
         pantalla = pygame.display.set_mode((650, 550))
-        pygame.display.set_caption("Movimiento del Agente")
+        pygame.display.set_caption("Movimiento del ")
         reloj = pygame.time.Clock()
         corriendo = True
 
@@ -143,15 +144,15 @@ class InterfazUsuario(QWidget):
                 pygame.quit()
                 self.llegada_signal.emit()
 
-    def mensaje_llegada(self):
-        self.mostrar_mensaje("El agente ha llegado a la estantería. Puede seleccionar otra estantería a visitar.")
+    def mensajeLlegada(self):
+        self.mostrarMensaje("El agente ha llegado a la estantería. Puede seleccionar otra estantería a visitar.")
 
-    def reiniciar_simulacion(self):
+    def reiniciarSimulacion(self):
         self.agente_pos = None
         self.tablero = Tablero(11, 13)
-        self.mostrar_mensaje("Simulación reiniciada. Seleccione el inicio del agente.")
+        self.mostrarMensaje("Simulación reiniciada. Seleccione el inicio del agente.")
 
-    def mostrar_mensaje(self, mensaje):
+    def mostrarMensaje(self, mensaje):
         QMessageBox.information(self, "Información", mensaje)
 
 if __name__ == "__main__":
