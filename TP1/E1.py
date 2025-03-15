@@ -289,6 +289,19 @@ class AlmacenGame:
         
         pygame.quit()
 
+# ========================
+#   CLASE: MENU
+# ========================
+class Menu:
+    """
+    Muestra un menú interactivo para configurar la simulación antes de iniciar.
+    """
+    def _init__(self, x_limite, y_limite, opciones):
+        self.x_limite = x_limite
+        self.y_limite = y_limite
+        self.opciones = opciones
+        pass
+
 # ======================
 #   EJECUCIÓN DIRECTA
 # ======================

@@ -1,0 +1,87 @@
+from BG_Casilla import Casilla
+from BG_AStar import AStar
+import pygame
+
+BLANCO = (255, 255, 255)
+AMARILLO = (255, 255, 0)
+NEGRO = (0, 0, 0)
+AZUL = (0, 0, 255)
+
+TAMANO_CELDA = 50
+
+class Tablero:
+    def __init__(self, filas, columnas):
+        self.filas = filas
+        self.columnas = columnas
+        self.grid = [[Casilla() for _ in range(columnas)] for _ in range(filas)]
+        self.posicion = {}
+        self.estanteriaCarga()
+
+    def estanteriaCarga(self):
+        estanterias = [
+            [(1,2,1), (1,3,2), (2,2,3), (2,3,4), (3,2,5), (3,3,6), (4,2,7), (4,3,8)],
+            [(1,6,9), (1,7,10), (2,6,11), (2,7,12), (3,6,13), (3,7,14), (4,6,15), (4,7,16)],
+            [(1,10,17), (1,11,18), (2,10,19), (2,11,20), (3,10,21), (3,11,22), (4,10,23), (4,11,24)],
+            [(6,2,25), (6,3,26), (7,2,27), (7,3,28), (8,2,29), (8,3,30), (9,2,31), (9,3,32)],
+            [(6,6,33), (6,7,34), (7,6,35), (7,7,36), (8,6,37), (8,7,38), (9,6,39), (9,7,40)],
+            [(6,10,41), (6,11,42), (7,10,43), (7,11,44), (8,10,45), (8,11,46), (9,10,47), (9,11,48)]
+        ]
+
+        for grupo in estanterias:
+            for fila, columna, numero in grupo:
+                self.establecerCasilla(fila, columna, "E", contenido = numero)
+
+        self.establecerCasilla(5, 0, "C")
+
+    def transitable(self, fila, columna):
+        if 0 <= fila < self.filas and 0 <= columna < self.columnas:
+            return self.grid[fila][columna].tipo == "R" or self.grid[fila][columna].tipo == "C"
+        return False
+    
+    def posicionAgente(self, agente, fila, columna):
+        if self.transitable(fila, columna) and self.grid[fila][columna].ocupar(agente):
+            self.posicion[agente] = (fila, columna)
+
+    def moverAgente(self, agente, nueva_fila, nueva_columna):
+        if agente in self.posicion and self.transitable(nueva_fila, nueva_columna):             
+            fila_actual, columna_actual = self.posicion[agente]
+            self.grid[fila_actual][columna_actual].liberar()
+            self.grid[nueva_fila][nueva_columna].tipo = "A"
+            self.posicion[agente] = (nueva_fila, nueva_columna)
+    
+    def encontrarEstanteria(self, fila, columna):
+        for dx in [-1, 1]:
+            nueva_columna = columna + dx
+            if self.transitable(fila, nueva_columna):
+                return (fila, nueva_columna)
+        return None
+
+    def establecerCasilla(self, fila, columna, tipo, contenido = None):
+        if 0 <= fila < self.filas and 0 <= columna < self.columnas:
+            self.grid[fila][columna] = Casilla(tipo, contenido)
+
+    def dibujarTablero(self, pantalla):
+        fuente = pygame.font.Font(None, 30)
+        for fila in range(self.filas):
+            for columna in range(self.columnas):
+                casilla = self.grid[fila][columna]
+                if casilla.tipo == "A":
+                    color = AZUL
+                elif casilla.tipo == "R":
+                    color = BLANCO
+                elif casilla.tipo == "E":
+                    color = NEGRO
+                elif casilla.tipo == "C":
+                    color = AMARILLO
+
+                pygame.draw.rect(pantalla, color, (columna * TAMANO_CELDA, fila * TAMANO_CELDA, TAMANO_CELDA, TAMANO_CELDA))
+                pygame.draw.rect(pantalla, NEGRO, (columna * TAMANO_CELDA, fila * TAMANO_CELDA, TAMANO_CELDA, TAMANO_CELDA), 1)
+
+                if casilla.tipo == "C":
+                    texto = fuente.render("C", True, NEGRO)
+                    texto_rect = texto.get_rect(center = (columna * TAMANO_CELDA + TAMANO_CELDA // 2, fila * TAMANO_CELDA + TAMANO_CELDA // 2))
+                    pantalla.blit(texto, texto_rect)
+                elif casilla.tipo == "E" and casilla.contenido is not None:
+                    texto = fuente.render(str(casilla.contenido), True, BLANCO)
+                    texto_rect = texto.get_rect(center = (columna * TAMANO_CELDA + TAMANO_CELDA // 2, fila * TAMANO_CELDA + TAMANO_CELDA // 2))
+                    pantalla.blit(texto, texto_rect)
