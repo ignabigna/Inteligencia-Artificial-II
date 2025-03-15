@@ -1,18 +1,22 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QLineEdit, QMessageBox
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QLineEdit, QMessageBox, QInputDialog
+from PyQt6.QtCore import pyqtSignal
 import sys
 import pygame
 import threading
 from BG_Tablero import Tablero, AStar
 
 class InterfazUsuario(QWidget):
+    llegada_signal = pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self.initUI()
         self.tablero = Tablero(11, 13)
         self.agente_pos = None
+        self.llegada_signal.connect(self.mensaje_llegada)
 
     def initUI(self):
-        self.setWindowTitle("Simulador de Agente con PyQt6")
+        self.setWindowTitle("Menu de Recoleccion de Paquetes")
         self.setGeometry(100, 100, 400, 300)
 
         layout = QVBoxLayout()
@@ -46,18 +50,26 @@ class InterfazUsuario(QWidget):
     def iniciar_agente(self, opcion):
         if opcion == "C":
             self.agente_pos = (5, 0)
-        self.mostrar_mensaje("El agente ha sido colocado. Ahora seleccione una estantería.")
+            self.tablero.posicionAgente("A", 5, 0)
+        self.mostrar_mensaje("El agente ha sido colocado en la zona de carga. Ahora seleccione una estantería.")
 
     def pedir_coordenadas(self):
-        coordenadas, ok = QMessageBox.getText(self, "Ingresar coordenadas", "Ingrese fila y columna separadas por una coma:")
-        if ok:
+        coordenadas, ok = QInputDialog.getText(self, "Ingresar coordenadas", "Ingrese fila y columna separadas por una coma:")
+        if ok and coordenadas:
             try:
                 fila, columna = map(int, coordenadas.split(","))
+
+                if self.tablero.grid[fila][columna].tipo == "E":
+                    self.mostrar_mensaje("No puede colocar el agente en una estantería. Elija otra casilla.")
+                    return
+
                 if self.tablero.transitable(fila, columna):
                     self.agente_pos = (fila, columna)
-                    self.mostrar_mensaje("El agente ha sido colocado. Ahora seleccione una estantería.")
+                    self.tablero.posicionAgente("A", fila, columna)
+                    self.mostrar_mensaje(f"El agente ha sido colocado en ({fila}, {columna}). Ahora seleccione una estantería.")
                 else:
                     self.mostrar_mensaje("Casilla no válida. Debe ser una casilla recorrible.")
+
             except ValueError:
                 self.mostrar_mensaje("Entrada inválida. Ingrese números separados por una coma.")
 
@@ -65,6 +77,8 @@ class InterfazUsuario(QWidget):
         if not self.agente_pos:
             self.mostrar_mensaje("Debe colocar al agente primero.")
             return
+
+        self.tablero.reiniciarTablero()
 
         numero_estanteria = self.input_estanteria.text()
         if not numero_estanteria.isdigit():
@@ -88,6 +102,10 @@ class InterfazUsuario(QWidget):
         destino = self.tablero.encontrarEstanteria(*estanteria_objetivo)
         if not destino:
             self.mostrar_mensaje("No hay una casilla recorrible junto a la estantería.")
+            return
+        
+        if self.agente_pos == destino:
+            self.mostrar_mensaje("Ya se encuentra en esta estantería. Seleccione otra diferente.")
             return
 
         camino = AStar.buscar_camino(self.tablero, self.agente_pos, destino)
@@ -114,6 +132,7 @@ class InterfazUsuario(QWidget):
             if camino:
                 paso = camino.pop(0)
                 self.tablero.moverAgente("A", paso[0], paso[1])
+                self.agente_pos = (paso[0], paso[1])
                 pantalla.fill((0, 0, 0))
                 self.tablero.dibujarTablero(pantalla)
                 pygame.display.flip()
@@ -121,9 +140,11 @@ class InterfazUsuario(QWidget):
                 reloj.tick(30)
             else:
                 corriendo = False
-                self.mostrar_mensaje("El agente ha llegado a la estantería.")
+                pygame.quit()
+                self.llegada_signal.emit()
 
-        pygame.quit()
+    def mensaje_llegada(self):
+        self.mostrar_mensaje("El agente ha llegado a la estantería. Puede seleccionar otra estantería a visitar.")
 
     def reiniciar_simulacion(self):
         self.agente_pos = None

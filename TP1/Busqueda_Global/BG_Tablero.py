@@ -35,7 +35,7 @@ class Tablero:
 
     def transitable(self, fila, columna):
         if 0 <= fila < self.filas and 0 <= columna < self.columnas:
-            return self.grid[fila][columna].tipo == "R" or self.grid[fila][columna].tipo == "C"
+            return self.grid[fila][columna].tipo in ["R", "C"]
         return False
     
     def posicionAgente(self, agente, fila, columna):
@@ -45,9 +45,20 @@ class Tablero:
     def moverAgente(self, agente, nueva_fila, nueva_columna):
         if agente in self.posicion and self.transitable(nueva_fila, nueva_columna):             
             fila_actual, columna_actual = self.posicion[agente]
-            self.grid[fila_actual][columna_actual].liberar()
-            self.grid[nueva_fila][nueva_columna].tipo = "A"
+            
+            if self.grid[fila_actual][columna_actual].tipo == "A" and self.grid[fila_actual][columna_actual].tipo != "C":
+                self.grid[fila_actual][columna_actual].tipo = "R"
+
+            if self.grid[nueva_fila][nueva_columna].tipo != "C":
+                self.grid[nueva_fila][nueva_columna].tipo = "A"
+
             self.posicion[agente] = (nueva_fila, nueva_columna)
+
+    def reiniciarTablero(self):
+        for fila in range(self.filas):
+            for columna in range(self.columnas):
+                if self.grid[fila][columna].tipo == "A":
+                    self.grid[fila][columna].tipo = "R"
     
     def encontrarEstanteria(self, fila, columna):
         for dx in [-1, 1]:
@@ -65,14 +76,15 @@ class Tablero:
         for fila in range(self.filas):
             for columna in range(self.columnas):
                 casilla = self.grid[fila][columna]
-                if casilla.tipo == "A":
+
+                if casilla.tipo == "C":
+                    color = AMARILLO
+                elif casilla.tipo == "A":
                     color = AZUL
                 elif casilla.tipo == "R":
                     color = BLANCO
                 elif casilla.tipo == "E":
                     color = NEGRO
-                elif casilla.tipo == "C":
-                    color = AMARILLO
 
                 pygame.draw.rect(pantalla, color, (columna * TAMANO_CELDA, fila * TAMANO_CELDA, TAMANO_CELDA, TAMANO_CELDA))
                 pygame.draw.rect(pantalla, NEGRO, (columna * TAMANO_CELDA, fila * TAMANO_CELDA, TAMANO_CELDA, TAMANO_CELDA), 1)
