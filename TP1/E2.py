@@ -282,7 +282,7 @@ class AlmacenGame:
         while not self.warehouse_map.es_transitable(r_random, c_random):
             r_random = random.randint(0, self.ROWS-1)
             c_random = random.randint(0, self.COLS-1)
-        self.mc2 = Montacargas(id_mc=2, posicion_inicial=(r_random, c_random))
+        self.mc2 = Montacargas(id_mc=2, posicion_inicial=(0, 8))
 
         # Elegir estantería al azar para MC2
         lista_estanterias = list(self.warehouse_map.estanterias.keys())
