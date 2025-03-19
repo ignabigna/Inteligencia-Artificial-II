@@ -105,6 +105,7 @@ class InterfazUsuario(QWidget):
 
         self.tablero.reiniciarTablero()
         orden_pedido = self.ordenes[self.orden_actual]
+        print(f"Orden de recolección: {orden_pedido}")
         sa = TempleSimulado(self.tablero, orden_pedido)
         threading.Thread(target=self.calcularOrdenOptimo, args=(sa,)).start()
     
