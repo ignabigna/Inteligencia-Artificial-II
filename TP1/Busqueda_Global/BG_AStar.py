@@ -11,7 +11,8 @@ class AStar:
         heapq.heappush(abiertos, (0, inicio))
         padres = {inicio: None}
         costos = {inicio: 0}
-        
+        visitados = set()
+
         while abiertos:
             _, actual = heapq.heappop(abiertos)
             if actual == objetivo:
@@ -21,9 +22,11 @@ class AStar:
                     actual = padres[actual]
                 return camino[::-1]
 
+            visitados.add(actual)
+
             for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                 nx, ny = actual[0] + dx, actual[1] + dy
-                if tablero.transitable(nx, ny):
+                if tablero.transitable(nx, ny) and (nx, ny) not in visitados:
                     nuevo_costo = costos[actual] + 1
                     if (nx, ny) not in costos or nuevo_costo < costos[(nx, ny)]:
                         costos[(nx, ny)] = nuevo_costo

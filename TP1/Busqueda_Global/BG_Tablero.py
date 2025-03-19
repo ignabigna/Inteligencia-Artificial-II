@@ -1,5 +1,8 @@
-from BG_Casilla import Casilla
-from BG_AStar import AStar
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from TP1.Busqueda_Global.BG_Casilla import Casilla
+from TP1.Busqueda_Global.BG_AStar import AStar
 import pygame
 
 BLANCO = (255, 255, 255)
@@ -15,6 +18,18 @@ class Tablero:
         self.grid = [[Casilla() for _ in range(columnas)] for _ in range(filas)]
         self.posicion = {}
         self.estanteriaCarga()
+    
+    def colorearCasilla(self, fila, columna, color):
+        if 0 <= fila < self.filas and 0 <= columna < self.columnas:
+            self.grid[fila][columna].color = color
+
+    def limpiarTablero(self):
+        for fila in range(self.filas):
+            for columna in range(self.columnas):
+                casilla = self.grid[fila][columna]
+                if casilla.tipo not in ["E", "C"]:
+                    casilla.color = (255, 255, 255)
+
 
     def estanteriaCarga(self):
         estanterias = [
@@ -80,19 +95,19 @@ class Tablero:
                     color = AMARILLO
                 elif casilla.tipo == "A":
                     color = AZUL
-                elif casilla.tipo == "R":
-                    color = BLANCO
                 elif casilla.tipo == "E":
                     color = NEGRO
+                elif casilla.tipo == "R":
+                    color = casilla.color
 
                 pygame.draw.rect(pantalla, color, (columna * self.tamano_celda, fila * self.tamano_celda, self.tamano_celda, self.tamano_celda))
                 pygame.draw.rect(pantalla, NEGRO, (columna * self.tamano_celda, fila * self.tamano_celda, self.tamano_celda, self.tamano_celda), 1)
 
                 if casilla.tipo == "C":
                     texto = fuente.render("C", True, NEGRO)
-                    texto_rect = texto.get_rect(center = (columna * self.tamano_celda + self.tamano_celda // 2, fila * self.tamano_celda + self.tamano_celda // 2))
+                    texto_rect = texto.get_rect(center=(columna * self.tamano_celda + self.tamano_celda // 2, fila * self.tamano_celda + self.tamano_celda // 2))
                     pantalla.blit(texto, texto_rect)
                 elif casilla.tipo == "E" and casilla.contenido is not None:
                     texto = fuente.render(str(casilla.contenido), True, BLANCO)
-                    texto_rect = texto.get_rect(center = (columna * self.tamano_celda + self.tamano_celda // 2, fila * self.tamano_celda + self.tamano_celda // 2))
+                    texto_rect = texto.get_rect(center=(columna * self.tamano_celda + self.tamano_celda // 2, fila * self.tamano_celda + self.tamano_celda // 2))
                     pantalla.blit(texto, texto_rect)

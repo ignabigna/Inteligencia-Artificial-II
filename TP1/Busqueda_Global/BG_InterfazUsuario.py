@@ -1,9 +1,10 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QLineEdit, QMessageBox, QInputDialog
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtCore import pyqtSignal, QTimer
 import sys
 import pygame
 import threading
-from BG_Tablero import Tablero, AStar
+from BG_Tablero import Tablero
+from BG_AStar import AStar
 
 AGENTE_IMG_PATH = "TP1/Imagenes/Rick.png"
 
@@ -118,7 +119,7 @@ class InterfazUsuario(QWidget):
     def simularMovimiento(self, camino):
         pygame.quit()
         pygame.init()
-        pantalla = pygame.display.set_mode((900, 750))
+        pantalla = pygame.display.set_mode((900, 800))
         pygame.display.set_caption("Movimiento del Recolector")
         reloj = pygame.time.Clock()
         corriendo = True
@@ -134,6 +135,10 @@ class InterfazUsuario(QWidget):
                 paso = camino.pop(0)
                 self.tablero.moverAgente("A", paso[0], paso[1])
                 self.agente_pos = (paso[0], paso[1])
+
+                if self.tablero.grid[paso[0]][paso[1]].tipo != "C":
+                    self.tablero.colorearCasilla(paso[0], paso[1], (128, 191, 255))
+
                 pantalla.fill((0, 0, 0))
                 self.tablero.dibujarTablero(pantalla)
                 pantalla.blit(self.imagen_agente, (self.agente_pos[1] * self.tamano_celda, self.agente_pos[0] * self.tamano_celda))
@@ -143,6 +148,7 @@ class InterfazUsuario(QWidget):
             else:
                 corriendo = False
                 pygame.quit()
+                self.tablero.limpiarTablero()
                 self.llegada_signal.emit()
 
     def mensajeLlegada(self):
@@ -155,7 +161,16 @@ class InterfazUsuario(QWidget):
         self.mostrarMensaje("Simulación reiniciada. Seleccione el inicio del agente.")
 
     def mostrarMensaje(self, mensaje):
-        QMessageBox.information(self, "Información", mensaje)
+        mensaje_box = QMessageBox(self)
+        mensaje_box.setText(mensaje)
+        mensaje_box.setWindowTitle("Información")
+        mensaje_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+
+        def cerrar_mensaje():
+            mensaje_box.close()
+
+        QTimer.singleShot(2000, cerrar_mensaje)
+        mensaje_box.exec()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

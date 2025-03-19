@@ -4,6 +4,7 @@ class Casilla:
         self.contenido = contenido
         self.visita = False
         self.ocupacion = None
+        self.color = (255, 255, 255)
 
     def registrarVisita(self):
         if self.tipo == "E":
