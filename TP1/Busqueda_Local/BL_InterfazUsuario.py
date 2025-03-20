@@ -11,8 +11,6 @@ from TP1.Busqueda_Global.BG_Tablero import Tablero
 from TP1.Busqueda_Global.BG_AStar import AStar
 from BL_TempleSimulado import TempleSimulado
 
-AGENTE_IMG_PATH = "TP1/Imagenes/Rick.png"
-
 class InterfazUsuario(QWidget):
     llegada_signal = pyqtSignal()
 
@@ -25,8 +23,6 @@ class InterfazUsuario(QWidget):
         self.ordenes = self.cargarOrdenes("TP1/Busqueda_Local/ordenes.csv")
         self.orden_actual = 0
         self.llegada_signal.connect(self.mensajeLlegada)
-        self.imagen_agente = pygame.image.load(AGENTE_IMG_PATH)
-        self.imagen_agente = pygame.transform.scale(self.imagen_agente, (self.tamano_celda, self.tamano_celda))
         self.estanterias_visitadas = set()
 
     def initUI(self):
@@ -119,7 +115,6 @@ class InterfazUsuario(QWidget):
 
             pantalla.fill((0, 0, 0))
             self.tablero.dibujarTablero(pantalla)
-            pantalla.blit(self.imagen_agente, (columna * self.tamano_celda, fila * self.tamano_celda))
             pygame.display.flip()
             pygame.time.delay(300)
 
@@ -169,7 +164,6 @@ class InterfazUsuario(QWidget):
 
             pantalla.fill((0, 0, 0))
             self.tablero.dibujarTablero(pantalla)
-            pantalla.blit(self.imagen_agente, (self.agente_pos[1] * self.tamano_celda, self.agente_pos[0] * self.tamano_celda))
             pygame.display.flip()
             pygame.time.delay(300)
 

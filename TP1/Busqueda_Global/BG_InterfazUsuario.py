@@ -6,8 +6,6 @@ import threading
 from BG_Tablero import Tablero
 from BG_AStar import AStar
 
-AGENTE_IMG_PATH = "TP1/Imagenes/Rick.png"
-
 class InterfazUsuario(QWidget):
     llegada_signal = pyqtSignal()
 
@@ -18,8 +16,6 @@ class InterfazUsuario(QWidget):
         self.tamano_celda = self.tablero.tamano_celda
         self.agente_pos = None
         self.llegada_signal.connect(self.mensajeLlegada)
-        self.imagen_agente = pygame.image.load(AGENTE_IMG_PATH)
-        self.imagen_agente = pygame.transform.scale(self.imagen_agente, (self.tamano_celda, self.tamano_celda))
         self.estanterias_visitadas = set()
 
     def initUI(self):
@@ -141,7 +137,6 @@ class InterfazUsuario(QWidget):
 
                 pantalla.fill((0, 0, 0))
                 self.tablero.dibujarTablero(pantalla)
-                pantalla.blit(self.imagen_agente, (self.agente_pos[1] * self.tamano_celda, self.agente_pos[0] * self.tamano_celda))
                 pygame.display.flip()
                 pygame.time.delay(300)
                 reloj.tick(30)
