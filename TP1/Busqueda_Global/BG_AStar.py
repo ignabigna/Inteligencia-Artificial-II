@@ -15,6 +15,7 @@ class AStar:
 
         while abiertos:
             _, actual = heapq.heappop(abiertos)
+            
             if actual == objetivo:
                 camino = []
                 while actual:
