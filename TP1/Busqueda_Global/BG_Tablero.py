@@ -2,7 +2,6 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from TP1.Busqueda_Global.BG_Casilla import Casilla
-from TP1.Busqueda_Global.BG_AStar import AStar
 import pygame
 
 BLANCO = (255, 255, 255)

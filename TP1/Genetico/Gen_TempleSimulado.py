@@ -6,7 +6,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')
 from TP1.Busqueda_Global.BG_AStar import AStar
 
 class TempleSimulado:
-    def __init__(self, tablero, orden_pedido, temperatura_inicial=300, temperatura_final=0.1, decaimiento=0.997, max_iteraciones=10000):
+    def __init__(self, tablero, orden_pedido, temperatura_inicial=300, temperatura_final=0.2, decaimiento=0.996, max_iteraciones=10000):
         self.tablero = tablero
         self.orden_pedido = orden_pedido
         self.temperatura_inicial = temperatura_inicial

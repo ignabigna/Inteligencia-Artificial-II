@@ -133,66 +133,65 @@ class Mapa():
         camino = self.encontrar_camino(inicio, objetivo)
         return camino
         
+if __name__ == "__main__":
+    pygame.init()
 
-pygame.init()
+    pantalla = pygame.display.set_mode((13*wc, 11*hc))
+    mapa = Mapa(13, 11)
+    mapa.agregar_estantes(2, 1, 2, 4)
+    mapa.agregar_estantes(2, 6, 2, 4)
+    mapa.agregar_estantes(6, 1, 2, 4)
+    mapa.agregar_estantes(6, 6, 2, 4)
+    mapa.agregar_estantes(10, 1, 2, 4)
+    mapa.agregar_estantes(10, 6, 2, 4)
+    mapa.celdas[0][5].tipo = DESCARGA
+    mapa.celdas[0][5].ocupado = True
+    mapa.dibujar(pantalla)
+    pygame.display.flip()
 
-pantalla = pygame.display.set_mode((13*wc, 11*hc))
-mapa = Mapa(13, 11)
-mapa.agregar_estantes(2, 1, 2, 4)
-mapa.agregar_estantes(2, 6, 2, 4)
-mapa.agregar_estantes(6, 1, 2, 4)
-mapa.agregar_estantes(6, 6, 2, 4)
-mapa.agregar_estantes(10, 1, 2, 4)
-mapa.agregar_estantes(10, 6, 2, 4)
-mapa.celdas[0][5].tipo = DESCARGA
-mapa.celdas[0][5].ocupado = True
-mapa.dibujar(pantalla)
-pygame.display.flip()
+    #tasks=[(pos_inicial),estante]
+    tasks=[]
+    tasks.append([(0,5),41,M1])
+    tasks.append([(12,5),20,M2])
+    tasks.append([(12,0),4,M3])
+    tasks.append([(0,10),35,M4])
+    #caminos=[[pos_anterior,[camino],estante]]
+    caminos=[]
+    for task in tasks:
+        camino=mapa.ir_al_estante(task[0],task[1])
+        caminos.append([None,camino,task[1],task[2]])
 
-#tasks=[(pos_inicial),estante]
-tasks=[]
-tasks.append([(0,5),41,M1])
-tasks.append([(12,5),20,M2])
-tasks.append([(12,0),4,M3])
-tasks.append([(0,10),35,M4])
-#caminos=[[pos_anterior,[camino],estante]]
-caminos=[]
-for task in tasks:
-    camino=mapa.ir_al_estante(task[0],task[1])
-    caminos.append([None,camino,task[1],task[2]])
-pygame.time.wait(10000)
-
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            exit()
-    for camino in caminos:
-        if not camino[1]:
-            caminos.remove(camino)
-            continue
-        celda = camino[1][0]
-        if camino[0]:
-            alternativo=mapa.ir_al_estante(camino[0].pos, camino[2])
-            if alternativo:
-                alternativo.pop(0)
-                if len(alternativo)<len(camino[1]):
-                    camino[1] = alternativo
-                    celda = camino[1][0]
-        if mapa.celdas[celda[0]][celda[1]].ocupado and mapa.celdas[celda[0]][celda[1]].tipo != DESCARGA:
-            nuevo_camino = mapa.ir_al_estante(camino[0].pos, camino[2])
-            if nuevo_camino == None:
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit()
+        for camino in caminos:
+            if not camino[1]:
+                caminos.remove(camino)
                 continue
-            camino[1] = nuevo_camino
-            camino[1].pop(0)
             celda = camino[1][0]
-        if camino[0]:
-            camino[0].tipo = PASILLO
-            camino[0].visitado = 2
-            camino[0].ocupado = False
-        camino[0] = mapa.celdas[celda[0]][celda[1]]
-        mapa.celdas[celda[0]][celda[1]].tipo = camino[3]
-        mapa.celdas[celda[0]][celda[1]].ocupado = True
-        mapa.dibujar(pantalla)
-        pygame.display.flip()
-        pygame.time.wait(200)
-        camino[1].pop(0)
+            if camino[0]:
+                alternativo=mapa.ir_al_estante(camino[0].pos, camino[2])
+                if alternativo:
+                    alternativo.pop(0)
+                    if len(alternativo)<len(camino[1]):
+                        camino[1] = alternativo
+                        celda = camino[1][0]
+            if mapa.celdas[celda[0]][celda[1]].ocupado and mapa.celdas[celda[0]][celda[1]].tipo != DESCARGA:
+                nuevo_camino = mapa.ir_al_estante(camino[0].pos, camino[2])
+                if nuevo_camino == None:
+                    continue
+                camino[1] = nuevo_camino
+                camino[1].pop(0)
+                celda = camino[1][0]
+            if camino[0]:
+                camino[0].tipo = PASILLO
+                camino[0].visitado = 2
+                camino[0].ocupado = False
+            camino[0] = mapa.celdas[celda[0]][celda[1]]
+            mapa.celdas[celda[0]][celda[1]].tipo = camino[3]
+            mapa.celdas[celda[0]][celda[1]].ocupado = True
+            mapa.dibujar(pantalla)
+            pygame.display.flip()
+            pygame.time.wait(200)
+            camino[1].pop(0)
