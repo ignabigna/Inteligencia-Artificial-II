@@ -1,5 +1,5 @@
 import heapq
-
+#a
 class AStar:
     @staticmethod
     def heuristica(a, b):
