@@ -136,14 +136,29 @@ class Mapa():
 if __name__ == "__main__":
     pygame.init()
 
-    pantalla = pygame.display.set_mode((13*wc, 11*hc))
-    mapa = Mapa(13, 11)
+    pantalla = pygame.display.set_mode((30*wc, 20*hc))
+    mapa = Mapa(30, 20)
     mapa.agregar_estantes(2, 1, 2, 4)
     mapa.agregar_estantes(2, 6, 2, 4)
     mapa.agregar_estantes(6, 1, 2, 4)
     mapa.agregar_estantes(6, 6, 2, 4)
     mapa.agregar_estantes(10, 1, 2, 4)
     mapa.agregar_estantes(10, 6, 2, 4)
+    mapa.agregar_estantes(14, 1, 2, 9)
+    mapa.agregar_estantes(18, 1, 2, 4)
+    mapa.agregar_estantes(18, 6, 2, 4)
+    mapa.agregar_estantes(22, 1, 2, 4)
+    mapa.agregar_estantes(22, 6, 2, 4)
+    mapa.agregar_estantes(26, 1, 2, 4)
+    mapa.agregar_estantes(26, 6, 2, 4)
+
+    mapa.agregar_estantes(2, 12, 2, 7)
+    mapa.agregar_estantes(6, 12, 2, 7)
+    mapa.agregar_estantes(10, 12, 2, 7)
+    mapa.agregar_estantes(14, 12, 2, 7)
+    mapa.agregar_estantes(18, 12, 2, 7)
+    mapa.agregar_estantes(22, 12, 2, 7)
+    mapa.agregar_estantes(26, 12, 2, 7)
     mapa.celdas[0][5].tipo = DESCARGA
     mapa.celdas[0][5].ocupado = True
     mapa.dibujar(pantalla)
@@ -151,10 +166,9 @@ if __name__ == "__main__":
 
     #tasks=[(pos_inicial),estante]
     tasks=[]
-    tasks.append([(0,5),41,M1])
+
+    tasks.append([(0,5),24,M1])
     tasks.append([(12,5),20,M2])
-    tasks.append([(12,0),4,M3])
-    tasks.append([(0,10),35,M4])
     #caminos=[[pos_anterior,[camino],estante]]
     caminos=[]
     for task in tasks:
