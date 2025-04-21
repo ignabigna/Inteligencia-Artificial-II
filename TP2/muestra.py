@@ -6,7 +6,7 @@ import numpy as np
 pygame.init()
 
 # Definir dimensiones de la ventana
-WIDTH, HEIGHT = 600, 600
+WIDTH, HEIGHT = 900, 400
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Carro con Péndulo")
 
@@ -44,18 +44,19 @@ def cargar_datos_csv(nombre_archivo):
 def dibujar_carro_pendulo(x, theta):
     # Parámetros de la ventana
     carro_width = 60
-    carro_height = 20
+    carro_height = 40
     pendulum_length = 150  # Longitud del péndulo
     pendulum_radius = 5   # Radio del péndulo (esfera)
     
     # Escalar la posición del carro para que se vea mejor en la ventana
-    scaled_x = (x * 20) + WIDTH // 2  # Multiplicamos por 20 para aumentar el movimiento
+    scaled_x = (x * 50) + WIDTH // 2  # Multiplicamos por 15 para exagerar el movimiento
     
     # Limitar el movimiento del carro para que no se salga de la pantalla
-    scaled_x = max(min(scaled_x, WIDTH - carro_width // 2), carro_width // 2)
+    #scaled_x = max(min(scaled_x, WIDTH - carro_width // 2), carro_width // 2)
     
     # Posición del carro en la pantalla
     carro_y = HEIGHT - 100
+    carro_x = WIDTH/2
     
     # Ángulo del péndulo
     pendulum_x = int(scaled_x + pendulum_length * np.sin(np.radians(theta)))
@@ -69,6 +70,13 @@ def dibujar_carro_pendulo(x, theta):
     
     # Dibujar el círculo del péndulo (extremo)
     pygame.draw.circle(screen, RED, (pendulum_x, pendulum_y), pendulum_radius)
+
+    # Dibujar el eje X (línea en la parte inferior)
+    pygame.draw.line(screen, BLACK, (carro_x - 600, HEIGHT - 50), (carro_x + 600, HEIGHT - 50), 5)  # Línea horizontal
+
+    # Dibujar los indicadores de la posición en el eje X
+    for i in range(-20, 21, 5):  # Rango de -20 a 20
+        pygame.draw.line(screen, RED, (carro_x + i * 15, HEIGHT - 60), (carro_x + i * 15, HEIGHT - 40), 2)  # Marcadores
 
 # Función principal para la animación
 def animar():
@@ -85,14 +93,17 @@ def animar():
         dibujar_carro_pendulo(x_pos[index], theta[index])
 
         # Mostrar el tiempo, la velocidad del carro y la fuerza
+
         font = pygame.font.SysFont("Arial", 24)
         time_text = font.render(f"Tiempo: {time[index]:.2f} s", True, BLACK)
         velocity_text = font.render(f"Velocidad Carro: {v_carro[index]:.2f} m/s", True, BLACK)
         force_text = font.render(f"Fuerza: {fuerza[index]:.2f} N", True, BLACK)
+        position_text = font.render(f"Posición: {x_pos[index]:.2f} m*50", True, BLACK)
         
         screen.blit(time_text, (10, 10))
         screen.blit(velocity_text, (10, 40))
         screen.blit(force_text, (10, 70))
+        screen.blit(position_text, (WIDTH - 230, 10))  # Mostrar posición en la esquina superior derecha
 
         # Actualizar la pantalla
         pygame.display.flip()
@@ -109,7 +120,7 @@ def animar():
         index += 1
 
     # Al finalizar la animación, mantener la ventana abierta unos segundos
-    pygame.time.delay(100)
+    pygame.time.delay(1000)
 
 # Ejecutar la animación
 animar()

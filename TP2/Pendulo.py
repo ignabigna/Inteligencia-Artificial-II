@@ -5,8 +5,8 @@ import csv  # Para guardar el CSV
 from FuncionPertenencia import FuncionPertenencia as FP
 from FuncionPertenencia import GraficadorFunciones as GF
 
-CONSTANTE_M = 3  # Masa del carro
-CONSTANTE_m = 1  # Masa del péndulo
+CONSTANTE_M = 1  # Masa del carro
+CONSTANTE_m = 0.3  # Masa del péndulo
 CONSTANTE_l = 1  # Longitud del péndulo
 
 ### DEFINIR RANGOS ###
@@ -176,8 +176,8 @@ def simular_con_posicion(t_max, delta_t, theta_0, v_0, a_0, x_0, v_carro_0):
 
         # Almacenar los resultados
         y_theta.append(theta * 180 / np.pi)  # Convertir el ángulo de vuelta a grados
-        y_x.append(x)  # Almacenar la posición del carro
-        y_v_carro.append(v_carro)  # Almacenar la velocidad del carro
+        y_x.append(-x)  # Almacenar la posición del carro
+        y_v_carro.append(-v_carro)  # Almacenar la velocidad del carro
         y_fuerza.append(fuerza_crisp)  # Almacenar la fuerza aplicada
 
         # Verificar si el péndulo se ha caído
@@ -192,40 +192,58 @@ def simular_con_posicion(t_max, delta_t, theta_0, v_0, a_0, x_0, v_carro_0):
         for i in range(len(t)):
             writer.writerow([t[i], y_theta[i], y_x[i], y_v_carro[i], y_fuerza[i]])
 
-    # Crear los gráficos
-    fig, ax1 = plt.subplots(figsize=(10, 6))
+    # Gráfico del ángulo y la posición del carro en la misma ventana pero en gráficos separados
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 12))  # Crear dos subgráficos
 
     # Gráfico del ángulo
     ax1.plot(t, y_theta, color='tab:blue')
     ax1.set_xlabel('Tiempo (s)')
     ax1.set_ylabel('Ángulo (grados)', color='tab:blue')
     ax1.tick_params(axis='y', labelcolor='tab:blue')
+    ax1.set_title('Ángulo vs Tiempo')
+    ax1.grid(True)
 
-    ax2 = ax1.twinx()  # Crear un segundo eje Y para la posición del carro
+    # Gráfico de la posición del carro
     ax2.plot(t, y_x, color='tab:red')
+    ax2.set_xlabel('Tiempo (s)')
     ax2.set_ylabel('Posición del Carro (m)', color='tab:red')
     ax2.tick_params(axis='y', labelcolor='tab:red')
+    ax2.set_title('Posición del Carro vs Tiempo')
+    ax2.grid(True)
 
-    plt.title('Ángulo y Posición del Carro vs Tiempo')
-    plt.grid(True)
+    # Mostrar los dos gráficos
+    plt.tight_layout()  # Ajusta los subgráficos para que no se solapen
     plt.show()
 
-    # Gráfico de la velocidad y la fuerza
+    # Gráfico de la velocidad del carro, la velocidad angular y la fuerza
     fig, ax3 = plt.subplots(figsize=(10, 6))
 
+    # Gráfico de la velocidad del carro
     ax3.plot(t, y_v_carro, color='tab:green')
     ax3.set_xlabel('Tiempo (s)')
     ax3.set_ylabel('Velocidad del Carro (m/s)', color='tab:green')
     ax3.tick_params(axis='y', labelcolor='tab:green')
 
-    ax4 = ax3.twinx()  # Crear un segundo eje Y para la fuerza
-    ax4.plot(t, y_fuerza, color='tab:orange')
+    # Crear un segundo eje Y para la velocidad angular y la fuerza
+    ax4 = ax3.twinx()
+
+    # Gráfico de la velocidad angular
+
+    # Gráfico de la fuerza
+    ax4.plot(t, y_fuerza, color='tab:orange', label='Fuerza (N)')
     ax4.set_ylabel('Fuerza (N)', color='tab:orange')
     ax4.tick_params(axis='y', labelcolor='tab:orange')
 
-    plt.title('Velocidad del Carro y Fuerza vs Tiempo')
-    plt.grid(True)
+    # Título y leyenda
+    ax3.set_title('Velocidad del Carro, Velocidad Angular y Fuerza vs Tiempo')
+    ax3.grid(True)
+    ax4.legend(loc='upper right')
+
+    # Mostrar el gráfico de la velocidad y la fuerza
+    plt.tight_layout()
     plt.show()
 
+
 # Simulación con posición y velocidad del carro
-simular_con_posicion(10, 0.01, 25, -3, 0, 0, 0)
+simular_con_posicion(5, 0.001, -20, 3, 0, 0, 0)
+#tiempo, deltaT, angulo inicial, velocidad angular, posicion del carro, velocidad del carro
