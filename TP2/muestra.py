@@ -97,7 +97,7 @@ def animar():
         font = pygame.font.SysFont("Arial", 24)
         time_text = font.render(f"Tiempo: {time[index]:.2f} s", True, BLACK)
         velocity_text = font.render(f"Velocidad Carro: {v_carro[index]:.2f} m/s", True, BLACK)
-        force_text = font.render(f"Fuerza: {fuerza[index]:.2f} N", True, BLACK)
+        force_text = font.render(f"Fuerza: {-fuerza[index]:.2f} N", True, BLACK)
         position_text = font.render(f"Posición: {x_pos[index]:.2f} m*50", True, BLACK)
         
         screen.blit(time_text, (10, 10))

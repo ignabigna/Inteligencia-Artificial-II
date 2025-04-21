@@ -6,7 +6,7 @@ from FuncionPertenencia import FuncionPertenencia as FP
 from FuncionPertenencia import GraficadorFunciones as GF
 
 CONSTANTE_M = 3  # Masa del carro
-CONSTANTE_m = 0.5  # Masa del péndulo
+CONSTANTE_m = 1  # Masa del péndulo
 CONSTANTE_l = 1  # Longitud del péndulo
 
 ### DEFINIR RANGOS ###
@@ -193,7 +193,7 @@ def simular_con_posicion(t_max, delta_t, theta_0, v_0, a_0, x_0, v_carro_0):
             writer.writerow([t[i], y_theta[i], y_x[i], y_v_carro[i], y_fuerza[i]])
 
     # Gráfico del ángulo y la posición del carro en la misma ventana pero en gráficos separados
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 12))  # Crear dos subgráficos
+    fig, (ax1) = plt.subplots(figsize=(10, 12))  # Crear dos subgráficos
 
     # Gráfico del ángulo
     ax1.plot(t, y_theta, color='tab:blue')
@@ -203,13 +203,6 @@ def simular_con_posicion(t_max, delta_t, theta_0, v_0, a_0, x_0, v_carro_0):
     ax1.set_title('Ángulo vs Tiempo')
     ax1.grid(True)
 
-    # Gráfico de la posición del carro
-    ax2.plot(t, y_x, color='tab:red')
-    ax2.set_xlabel('Tiempo (s)')
-    ax2.set_ylabel('Posición del Carro (m)', color='tab:red')
-    ax2.tick_params(axis='y', labelcolor='tab:red')
-    ax2.set_title('Posición del Carro vs Tiempo')
-    ax2.grid(True)
 
     # Mostrar los dos gráficos
     plt.tight_layout()  # Ajusta los subgráficos para que no se solapen
@@ -245,5 +238,5 @@ def simular_con_posicion(t_max, delta_t, theta_0, v_0, a_0, x_0, v_carro_0):
 
 
 # Simulación con posición y velocidad del carro
-simular_con_posicion(5, 0.001, -20, 3, 0, 0, 0)
-#tiempo, deltaT, angulo inicial, velocidad angular, posicion del carro, velocidad del carro
+simular_con_posicion(5, 0.001, 20, 0, 0, 0, 0)
+#tiempo, deltaT, angulo inicial, velocidad angular, posicion del carro, -velocidad del carro (no tocar)
