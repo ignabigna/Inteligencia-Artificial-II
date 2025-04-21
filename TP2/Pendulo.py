@@ -5,8 +5,8 @@ import csv  # Para guardar el CSV
 from FuncionPertenencia import FuncionPertenencia as FP
 from FuncionPertenencia import GraficadorFunciones as GF
 
-CONSTANTE_M = 1  # Masa del carro
-CONSTANTE_m = 0.3  # Masa del péndulo
+CONSTANTE_M = 3  # Masa del carro
+CONSTANTE_m = 0.5  # Masa del péndulo
 CONSTANTE_l = 1  # Longitud del péndulo
 
 ### DEFINIR RANGOS ###
