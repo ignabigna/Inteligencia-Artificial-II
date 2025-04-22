@@ -5,8 +5,8 @@ import csv  # Para guardar el CSV
 from FuncionPertenencia import FuncionPertenencia as FP
 from FuncionPertenencia import GraficadorFunciones as GF
 
-CONSTANTE_M = 3  # Masa del carro
-CONSTANTE_m = 1  # Masa del péndulo
+CONSTANTE_M = 1  # Masa del carro
+CONSTANTE_m = 1.5  # Masa del péndulo
 CONSTANTE_l = 1  # Longitud del péndulo
 
 ### DEFINIR RANGOS ###
@@ -124,7 +124,7 @@ def defuzzificar(salidaPG, salidaPP, salidaZ, salidaNP, salidaNG):
     fzaNG = np.array([min(salidaNG, uFzaNG.evaluar(xi)) for xi in x])
     
     # Agregación final (máximo entre las funciones recortadas)
-    agregada = np.maximum(fzaPG, np.maximum(fzaPP, np.maximum(fzaZ, np.maximum(fzaNP, fzaNG))))
+    agregada = np.maximum(fzaPG, np.maximum(fzaPP, np.maximum(fzaZ, np.maximum(fzaNP, fzaNG)))) 
 
     # Defuzzificación: cálculo del centroide
     numerador = np.sum(agregada * x)
@@ -154,6 +154,8 @@ def simular_con_posicion(t_max, delta_t, theta_0, v_0, a_0, x_0, v_carro_0):
     y_x = []  # Para almacenar la posición del carro
     y_v_carro = []  # Para almacenar la velocidad del carro
     y_fuerza = []  # Para almacenar la fuerza
+    y_a_carro = []  # Para almacenar la aceleración del carro
+    y_a_pendulo = []  # Para almacenar la aceleración del péndulo
 
     # Crear el tiempo de simulación
     t = np.arange(0, t_max, delta_t)
@@ -179,6 +181,8 @@ def simular_con_posicion(t_max, delta_t, theta_0, v_0, a_0, x_0, v_carro_0):
         y_x.append(-x)  # Almacenar la posición del carro
         y_v_carro.append(-v_carro)  # Almacenar la velocidad del carro
         y_fuerza.append(fuerza_crisp)  # Almacenar la fuerza aplicada
+        y_a_carro.append(a_carro)  # Almacenar la aceleración del carro
+        y_a_pendulo.append(a)  # Almacenar la aceleración del péndulo
 
         # Verificar si el péndulo se ha caído
         if abs(theta * 180 / np.pi) >= 90:
@@ -188,11 +192,13 @@ def simular_con_posicion(t_max, delta_t, theta_0, v_0, a_0, x_0, v_carro_0):
     # Guardar los resultados en un archivo CSV
     with open('simulacion_resultados.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["Tiempo (s)", "Ángulo (grados)", "Posición del Carro (m)", "Velocidad del Carro (m/s)", "Fuerza (N)"])
+        writer.writerow(["Tiempo (s)", "Ángulo (grados)", "Posición del Carro (m)", "Velocidad del Carro (m/s)", "Fuerza (N)", "Aceleración del Carro (m/s^2)", "Aceleración del Péndulo (rad/s^2)"])
         for i in range(len(t)):
-            writer.writerow([t[i], y_theta[i], y_x[i], y_v_carro[i], y_fuerza[i]])
+            writer.writerow([t[i], y_theta[i], y_x[i], y_v_carro[i], y_fuerza[i], y_a_carro[i], y_a_pendulo[i]])
 
-    # Gráfico del ángulo y la posición del carro en la misma ventana pero en gráficos separados
+    # Graficar los resultados
+    # (El gráfico de los resultados no lo cambian ya que no es necesario modificarlo)
+        # Gráfico del ángulo y la posición del carro en la misma ventana pero en gráficos separados
     fig, (ax1) = plt.subplots(figsize=(10, 12))  # Crear dos subgráficos
 
     # Gráfico del ángulo
@@ -236,7 +242,5 @@ def simular_con_posicion(t_max, delta_t, theta_0, v_0, a_0, x_0, v_carro_0):
     plt.tight_layout()
     plt.show()
 
-
 # Simulación con posición y velocidad del carro
-simular_con_posicion(5, 0.001, 20, 0, 0, 0, 0)
-#tiempo, deltaT, angulo inicial, velocidad angular, posicion del carro, -velocidad del carro (no tocar)
+simular_con_posicion(5, 0.001, 30, 0, 0, 0, 0)

@@ -6,7 +6,7 @@ import numpy as np
 pygame.init()
 
 # Definir dimensiones de la ventana
-WIDTH, HEIGHT = 900, 400
+WIDTH, HEIGHT = 950, 400
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Carro con Péndulo")
 
@@ -27,6 +27,8 @@ def cargar_datos_csv(nombre_archivo):
     theta = []
     v_carro = []
     fuerza = []
+    a_carro = []
+    a_pendulo = []
     
     with open(nombre_archivo, 'r') as csvfile:
         reader = csv.reader(csvfile)
@@ -37,8 +39,10 @@ def cargar_datos_csv(nombre_archivo):
             theta.append(float(row[1]))
             v_carro.append(float(row[3]))
             fuerza.append(float(row[4]))
+            a_carro.append(float(row[5]))  # Aceleración del carro
+            a_pendulo.append(float(row[6]))  # Aceleración del péndulo
     
-    return np.array(time), np.array(x_pos), np.array(theta), np.array(v_carro), np.array(fuerza)
+    return np.array(time), np.array(x_pos), np.array(theta), np.array(v_carro), np.array(fuerza), np.array(a_carro), np.array(a_pendulo)
 
 # Función para dibujar el carro y el péndulo
 def dibujar_carro_pendulo(x, theta):
@@ -81,7 +85,7 @@ def dibujar_carro_pendulo(x, theta):
 # Función principal para la animación
 def animar():
     # Cargar los datos desde el CSV
-    time, x_pos, theta, v_carro, fuerza = cargar_datos_csv("TP2\simulacion_resultados.csv")
+    time, x_pos, theta, v_carro, fuerza, a_carro, a_pendulo = cargar_datos_csv("TP2\\simulacion_resultados.csv")
 
     # Bucle de la simulación
     running = True
@@ -92,24 +96,29 @@ def animar():
         # Dibujar el carro y el péndulo en la posición actual
         dibujar_carro_pendulo(x_pos[index], theta[index])
 
-        # Mostrar el tiempo, la velocidad del carro y la fuerza
-
+        # Mostrar el tiempo, la velocidad del carro, la fuerza, y las aceleraciones
         font = pygame.font.SysFont("Arial", 24)
         time_text = font.render(f"Tiempo: {time[index]:.2f} s", True, BLACK)
         velocity_text = font.render(f"Velocidad Carro: {v_carro[index]:.2f} m/s", True, BLACK)
         force_text = font.render(f"Fuerza: {-fuerza[index]:.2f} N", True, BLACK)
         position_text = font.render(f"Posición: {x_pos[index]:.2f} m*50", True, BLACK)
+        a_carro_text = font.render(f"A. Carro: {a_carro[index]:.2f} m/s²", True, BLACK)
+        a_pendulo_text = font.render(f"A. Péndulo: {a_pendulo[index]:.2f} rad/s²", True, BLACK)
         
         screen.blit(time_text, (10, 10))
         screen.blit(velocity_text, (10, 40))
         screen.blit(force_text, (10, 70))
         screen.blit(position_text, (WIDTH - 230, 10))  # Mostrar posición en la esquina superior derecha
+        screen.blit(a_carro_text, (WIDTH - 230, 40))  # Mostrar aceleración del carro
+        screen.blit(a_pendulo_text, (WIDTH - 230, 70))  # Mostrar aceleración del péndulo
 
         # Actualizar la pantalla
         pygame.display.flip()
 
-        # Control de framerate
-        clock.tick(30)  # 30 frames por segundo
+        # Control de framerate (ajustado según la aceleración del carro)
+        # La aceleración más grande, mayor velocidad en la animación
+        max_accel = max(abs(a_carro[index]), abs(a_pendulo[index]))  # Usar la aceleración más grande
+        clock.tick(30 + int(max_accel * 100))  # Multiplicar por 5 para exagerar la velocidad de la animación
 
         # Esperar eventos (como cerrar la ventana)
         for event in pygame.event.get():
