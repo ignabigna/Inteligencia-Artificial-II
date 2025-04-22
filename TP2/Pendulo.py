@@ -192,7 +192,7 @@ def simular_con_posicion(t_max, delta_t, theta_0, v_0, a_0, x_0, v_carro_0):
     # Guardar los resultados en un archivo CSV
     with open('simulacion_resultados.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["Tiempo (s)", "Ángulo (grados)", "Posición del Carro (m)", "Velocidad del Carro (m/s)", "Fuerza (N)", "Aceleración del Carro (m/s^2)", "Aceleración del Péndulo (rad/s^2)"])
+        writer.writerow(["Tiempo (s)", "Angulo (grados)", "Posicion del Carro (m)", "Velocidad del Carro (m/s)", "Fuerza (N)", "Aceleracion del Carro (m/s^2)", "Aceleración del Péndulo (rad/s^2)"])
         for i in range(len(t)):
             writer.writerow([t[i], y_theta[i], y_x[i], y_v_carro[i], y_fuerza[i], y_a_carro[i], y_a_pendulo[i]])
 

@@ -6,7 +6,7 @@ import numpy as np
 pygame.init()
 
 # Definir dimensiones de la ventana
-WIDTH, HEIGHT = 950, 400
+WIDTH, HEIGHT = 950, 450
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Carro con Péndulo")
 
@@ -97,13 +97,14 @@ def animar():
         dibujar_carro_pendulo(x_pos[index], theta[index])
 
         # Mostrar el tiempo, la velocidad del carro, la fuerza, y las aceleraciones
-        font = pygame.font.SysFont("Arial", 24)
-        time_text = font.render(f"Tiempo: {time[index]:.2f} s", True, BLACK)
-        velocity_text = font.render(f"Velocidad Carro: {v_carro[index]:.2f} m/s", True, BLACK)
-        force_text = font.render(f"Fuerza: {-fuerza[index]:.2f} N", True, BLACK)
-        position_text = font.render(f"Posición: {x_pos[index]:.2f} m*50", True, BLACK)
-        a_carro_text = font.render(f"A. Carro: {a_carro[index]:.2f} m/s²", True, BLACK)
-        a_pendulo_text = font.render(f"A. Péndulo: {a_pendulo[index]:.2f} rad/s²", True, BLACK)
+        font_small = pygame.font.SysFont("Arial", 20)  # Fuente más pequeña para los datos a la izquierda
+        time_text = font_small.render(f"Tiempo: {time[index]:.2f} s", True, BLACK)
+        velocity_text = font_small.render(f"Velocidad Carro: {v_carro[index]:.2f} m/s", True, BLACK)
+        force_text = font_small.render(f"Fuerza: {-fuerza[index]:.2f} N", True, BLACK)
+        position_text = font_small.render(f"Posición: {x_pos[index]:.2f} m/50", True, BLACK)
+        a_carro_text = font_small.render(f"A. Carro: {a_carro[index]:.2f} m/s²", True, BLACK)
+        a_pendulo_text = font_small.render(f"A. Péndulo: {a_pendulo[index]:.2f} rad/s²", True, BLACK)
+        angle_text = font_small.render(f"Ángulo: {theta[index]:.2f}°", True, BLACK)  # Agregar el ángulo del péndulo
         
         screen.blit(time_text, (10, 10))
         screen.blit(velocity_text, (10, 40))
@@ -111,6 +112,7 @@ def animar():
         screen.blit(position_text, (WIDTH - 230, 10))  # Mostrar posición en la esquina superior derecha
         screen.blit(a_carro_text, (WIDTH - 230, 40))  # Mostrar aceleración del carro
         screen.blit(a_pendulo_text, (WIDTH - 230, 70))  # Mostrar aceleración del péndulo
+        screen.blit(angle_text, (WIDTH - 230, 100))  # Mostrar ángulo del péndulo
 
         # Actualizar la pantalla
         pygame.display.flip()
