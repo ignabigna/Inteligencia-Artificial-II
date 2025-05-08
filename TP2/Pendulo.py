@@ -243,4 +243,4 @@ def simular_con_posicion(t_max, delta_t, theta_0, v_0, a_0, x_0, v_carro_0):
     plt.show()
 
 # Simulación con posición y velocidad del carro
-simular_con_posicion(5, 0.001, 30, 0, 0, 0, 0)
+simular_con_posicion(5, 0.001, 30, -1, 0, 0, 0)
