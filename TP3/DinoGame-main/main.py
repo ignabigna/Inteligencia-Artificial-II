@@ -150,7 +150,20 @@ def gameScreen():
                     obstacle_params = obstacle.rect
                     dino_params = dino.dino_rect
                     # ========================== ACTUALIZAR LA FUNCIÓN 'think' CON LOS PARÁMETROS DE ENTRADA DE LA RED ===================
-                    dino.update(dino.think())
+                    #dino.update(dino.think())
+                    if len(obstacles) > 0:
+                        obstacle = obstacles[0]
+                        inputs = [
+                            dino.dino_rect.y / 600,
+                            obstacle.rect.x / 1100,
+                            obstacle.type / 2,
+                            obstacle.rect.y / 600,
+                            game_speed / 50
+                        ]
+                        action = dino.think(inputs)
+                        dino.update(action)
+
+
                     # ====================================================================================================================
 
         if len(obstacles) == 0:
