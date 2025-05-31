@@ -48,7 +48,7 @@ def populate(population_size):
     return population
 
 # ======================== SELECT THE POPULATION NUMBER PLAYING AT THE SAME TIME ======================
-population_number = 40
+population_number = 100
 # =====================================================================================================
 population = populate(population_number)
 player = Dinosaur(0)
@@ -149,8 +149,6 @@ def gameScreen():
                 for obstacle in obstacles:
                     obstacle_params = obstacle.rect
                     dino_params = dino.dino_rect
-                    # ========================== ACTUALIZAR LA FUNCIÓN 'think' CON LOS PARÁMETROS DE ENTRADA DE LA RED ===================
-                    #dino.update(dino.think())
                     if len(obstacles) > 0:
                         obstacle = obstacles[0]
                         inputs = [
@@ -162,9 +160,6 @@ def gameScreen():
                         ]
                         action = dino.think(inputs)
                         dino.update(action)
-
-
-                    # ====================================================================================================================
 
         if len(obstacles) == 0:
             if random.randint(0, 2) == 0:
@@ -212,8 +207,21 @@ def gameScreen():
             countSurviving()
             currentGeneration()
 
-        clock.tick(30)
+        # === Agregado para mostrar en pantalla ===
+        # Mostrar generación, mejor puntaje y dinos vivos
+        text_gen = font.render(f"Generación: {generation}", True, (0, 0, 0))
+        text_best = font.render(f"Mejor puntaje: {bestScore}", True, (0, 0, 0))
+        text_alive = font.render(f"Dinos vivos: {count_alive(population)}", True, (0, 0, 0))
+
+        SCREEN.blit(text_gen, (10, 10))
+        SCREEN.blit(text_best, (10, 40))
+        SCREEN.blit(text_alive, (10, 70))
+        # === Fin agregado ===
+
         pygame.display.update()
+        clock.tick(30)
+
+        
 
 def menu():
     global callUpdateNetwork, generation, bestScore, playMode, population, population_number
@@ -284,4 +292,5 @@ def count_alive(population):
     return alive
 
 if __name__ == "__main__":
-    menu()
+    playMode = "g"  # cualquier valor que no sea 'm', 'c' ni 'a', activa el modo automático genético
+    gameScreen()

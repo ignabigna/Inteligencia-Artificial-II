@@ -33,7 +33,7 @@ def updateNetwork(population):
 
     # =============================================================================================================================
 
-def select_fittest(population, retain_fraction=0.25):
+def select_fittest(population, retain_fraction=0.30):
     # ===================== FUNCIÓN DE SELECCIÓN =====================
     #Funcion de seleccion con top 25%
     sorted_pop = sorted(enumerate(population), key=lambda x: x[1].score, reverse=True)
