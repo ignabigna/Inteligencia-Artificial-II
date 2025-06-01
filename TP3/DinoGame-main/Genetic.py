@@ -2,15 +2,13 @@ import random
 import numpy as np
 
 def updateNetwork(population):
-    # ===================== ESTA FUNCIÓN RECIBE UNA POBLACIÓN A LA QUE SE DEBEN APLICAR MECANISMOS DE SELECCIÓN, =================
-    # ===================== CRUCE Y MUTACIÓN. LA ACTUALIZACIÓN DE LA POBLACIÓN SE APLICA EN LA MISMA VARIABLE ====================
     print("=== Actualización de la población ===")
     print("Scores antes:")
     for i, dino in enumerate(population):
         print(f"Individuo {i}: score = {dino.score}")
 
     selected_indices = select_fittest(population)
-    print(f"Seleccionados para reproducción (top 25%): {selected_indices}")
+    print(f"Seleccionados para reproducción (top 30%): {selected_indices}")
 
     for i in range(len(population)):
         parent1 = population[random.choice(selected_indices)]
@@ -28,24 +26,13 @@ def updateNetwork(population):
 
     print("Scores después (reiniciados a 0 para la nueva generación)")
 
-
-    #TODA ACCION ACA TIENE QUE AFECTAR A TODA LA LISTA DE POBLACION
-
-    # =============================================================================================================================
-
-def select_fittest(population, retain_fraction=0.30):
-    # ===================== FUNCIÓN DE SELECCIÓN =====================
-    #Funcion de seleccion con top 25%
+def select_fittest(population, retain_fraction=0.01):
     sorted_pop = sorted(enumerate(population), key=lambda x: x[1].score, reverse=True)
-    retain_length = max(1, int(len(population) * retain_fraction))  # mínimo 1
+    retain_length = max(1, int(len(population) * retain_fraction))
     selected_indices = [i for i, dino in sorted_pop[:retain_length]]
     return selected_indices
 
-
-    # ================================================================
-
 def evolve(parent1, parent2, mutation_rate=0.05, mutation_strength=0.1):
-        # ===================== FUNCIÓN DE CRUCE Y MUTACIÓN =====================
     child = {}
     for attr in ['W1', 'B1', 'W2', 'B2']:
         p1_matrix = getattr(parent1, attr)
@@ -60,9 +47,3 @@ def evolve(parent1, parent2, mutation_rate=0.05, mutation_strength=0.1):
 
         child[attr] = child_matrix
     return child
-
-
-    # ===============================================================
-    
-
-     
