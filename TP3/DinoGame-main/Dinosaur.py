@@ -180,7 +180,7 @@ class Dinosaur(NeuralNetwork):
         
         # Take a screenshot and arrange the image
         # ===================== ARREGLAR TAMAÑO DE IMAGEN, NORMALIZACIÓN Y CANTIDAD DE CLASES PREDICHAS DE SER NECESARIO ===============
-        img = load_img("./images/live/temp.png", color_mode='grayscale', target_size=(600,400))
+        img = load_img("./images/live/temp.png", color_mode='grayscale', target_size=(58,56))
         img_array = img_to_array(img)
         img_array = img_array / 255.0  # Normaliza los valores de píxeles entre 0 y 1
         img_array = np.expand_dims(img_array, axis=0)  # Agrega una dimensión extra para el batch

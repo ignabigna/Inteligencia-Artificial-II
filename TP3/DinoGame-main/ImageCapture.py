@@ -27,7 +27,7 @@ class ImageCapture():
     def take_screenshot(self, key):
         # Save the screenshot
         self.count += 1
-        screenshot = pyscreenshot.grab(bbox=(self.window_left, self.window_top + 100, self.window_left + 600, self.window_top + 500))
+        screenshot = pyscreenshot.grab(bbox=(self.window_left + 160, self.window_top +220, self.window_left + 450, self.window_top + 500))
         screenshot.save("./images/{}/{}.png".format(key, self.count))
 
     def capture(self, userInput):
@@ -43,5 +43,5 @@ class ImageCapture():
 
     def capture_live(self):
         # Automatically take a screenshot for the Tensorflow model to work
-        screenshot = pyscreenshot.grab(bbox=(self.window_left, self.window_top + 100, self.window_left + 600, self.window_top + 500))
+        screenshot = pyscreenshot.grab(bbox=(self.window_left + 160, self.window_top +220, self.window_left + 450, self.window_top + 500))
         screenshot.save("./images/live/temp.png")

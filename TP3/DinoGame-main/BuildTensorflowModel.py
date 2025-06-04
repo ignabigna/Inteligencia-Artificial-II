@@ -36,7 +36,7 @@ train_ratio = 0.8
 
 # Parámetros para el modelo
 batch_size = 32
-image_size = (600, 400)
+image_size = (58, 56)
 input_shape = image_size + (1,)  # Tamaño de la imagen con un solo canal para escala de grises
 
 # Función para cargar imágenes y convertirlas a escala de grises
@@ -77,7 +77,7 @@ for class_name in classes:
         dest_test_path = os.path.join(test_dir + class_name, f"{img_name}")
         # Mover la imagen a la carpeta de prueba y renombrarla
         img_array = load_and_preprocess_image(src_img_path, image_size)
-        tf.keras.preprocessing.image.save_img(dest_train_path, img_array)
+        tf.keras.preprocessing.image.save_img(dest_test_path, img_array)
 
 # Crear generadores de datos
 train_datagen = ImageDataGenerator(rescale=1./255)
