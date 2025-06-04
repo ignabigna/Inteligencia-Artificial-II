@@ -6,7 +6,7 @@ except ImportError as err:
     subprocess.check_call(['pip', 'install', 'Pillow'])
     import tensorflow as tf
 
-from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
+from keras._tf_keras.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
 import os
 import random
 

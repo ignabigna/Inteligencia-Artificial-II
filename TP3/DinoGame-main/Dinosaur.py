@@ -11,7 +11,7 @@ import os
 import glob
 from NeuralNetwork import NeuralNetwork
 import numpy as np
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from keras._tf_keras.keras.preprocessing.image import load_img, img_to_array
 
 # Bring images from assets
 RUNNING = [os.path.join("TP3\DinoGame-main\Assets\Dino", "DinoRun1.png"),

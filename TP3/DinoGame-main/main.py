@@ -292,5 +292,6 @@ def count_alive(population):
     return alive
 
 if __name__ == "__main__":
-    playMode = "g"  # cualquier valor que no sea 'm', 'c' ni 'a', activa el modo automático genético
-    gameScreen()
+    #playMode = "g"  # cualquier valor que no sea 'm', 'c' ni 'a', activa el modo automático genético
+    #gameScreen()
+    menu()
