@@ -4,16 +4,16 @@ try:
 except ImportError as err:
     subprocess.check_call(['pip', 'install', 'pygame'])
     import pygame
-import pygame
-import os
+
 import random
+import os
 from Dinosaur import Dinosaur
 from Cloud import Cloud
 from Bird import Bird
 from SmallCactus import SmallCactus
 from LargeCactus import LargeCactus
-from Genetic import updateNetwork
 from ImageCapture import ImageCapture
+from Genetic import updateNetwork
 
 screen_spawn_position = (100, 100)
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % screen_spawn_position
@@ -32,7 +32,6 @@ imageCapture = ImageCapture(screen_spawn_position)
 
 BG = pygame.image.load(os.path.join("TP3", "DinoGame-main", "Assets", "Other", "Track.png"))
 
-
 def populate(population_size):
     population = []
     for i in range(population_size):
@@ -47,9 +46,7 @@ def populate(population_size):
         population.append(Dinosaur(i, color, True))
     return population
 
-# ======================== SELECT THE POPULATION NUMBER PLAYING AT THE SAME TIME ======================
 population_number = 1000
-# =====================================================================================================
 population = populate(population_number)
 player = Dinosaur(0)
 callUpdateNetwork = False
@@ -145,22 +142,20 @@ def gameScreen():
             for dino in population:
                 if dino.alive:
                     dino.draw(SCREEN)
-                
+
                 for obstacle in obstacles:
                     obstacle_params = obstacle.rect
                     dino_params = dino.dino_rect
                     if len(obstacles) > 0:
                         obstacle = obstacles[0]
-                        inputs = [
-                            dino.dino_rect.y / 600,
-                            obstacle.rect.x / 1100,
-                            obstacle.type / 2,
-                            obstacle.rect.y / 600,
-                            game_speed / 50,
-                            abs(dino.dino_rect.x - obstacle.rect.x) / 1100
-                        ]
-                        action = dino.think(inputs)
-                        dino.update(action)
+
+                        # **Hardcodeando lógica para salto y agacharse**
+                        if isinstance(obstacle, (SmallCactus, LargeCactus)):  # Si es un cactus
+                            if obstacle.rect.x < 300:  # Si el obstáculo está a menos de 300 píxeles
+                                dino.update("JUMP")  # El dinosaurio salta
+                        elif isinstance(obstacle, Bird):  # Si es un pájaro
+                            if obstacle.rect.x < 300:  # Si el pájaro está a menos de 300 píxeles
+                                dino.update("DUCK")  # El dinosaurio se agacha
 
         if len(obstacles) == 0:
             if random.randint(0, 2) == 0:
@@ -169,7 +164,6 @@ def gameScreen():
                 obstacles.append(LargeCactus(SCREEN_WIDTH, game_speed, obstacles))
             elif random.randint(0, 2) == 2:
                 obstacles.append(Bird(SCREEN_WIDTH, game_speed, obstacles))
-        
 
         for obstacle in obstacles:
             obstacle.draw(SCREEN)
@@ -179,7 +173,7 @@ def gameScreen():
             if playMode == 'm' or playMode == 'c' or playMode == 'a':
                 if player.dino_rect.colliderect(obstacle_params):
                     player.alive = False
-                    
+
             else:
                 for dino in population:
                     dino_params = dino.dino_rect
@@ -209,7 +203,6 @@ def gameScreen():
             currentGeneration()
 
         # === Agregado para mostrar en pantalla ===
-        # Mostrar generación, mejor puntaje y dinos vivos
         text_gen = font.render(f"Generación: {generation}", True, (0, 0, 0))
         text_best = font.render(f"Mejor puntaje: {bestScore}", True, (0, 0, 0))
         text_alive = font.render(f"Dinos vivos: {count_alive(population)}", True, (0, 0, 0))
@@ -222,8 +215,6 @@ def gameScreen():
         pygame.display.update()
         clock.tick(30)
 
-        
-
 def menu():
     global callUpdateNetwork, generation, bestScore, playMode, population, population_number
     run = True
@@ -235,7 +226,7 @@ def menu():
         callUpdateNetwork = False
         for dino in population:
             dino.resetStatus()
-        
+
     while run:
         SCREEN.fill((255, 255, 255))
         font = pygame.font.Font('freesansbold.ttf', 30)
@@ -264,7 +255,6 @@ def menu():
             scoreRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50)
             SCREEN.blit(score, scoreRect)
 
-
         textRect = text.get_rect()
 
         textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
@@ -281,10 +271,11 @@ def menu():
                         population = []
     
                 gameScreen()
-    # Aquí, al salir del loop, cerrá pygame y salí del programa
+
     pygame.quit()
     import sys
     sys.exit()
+
 def count_alive(population):
     alive = 0
     for dino in population:
@@ -293,6 +284,4 @@ def count_alive(population):
     return alive
 
 if __name__ == "__main__":
-    #playMode = "g"  # cualquier valor que no sea 'm', 'c' ni 'a', activa el modo automático genético
-    #gameScreen()
     menu()

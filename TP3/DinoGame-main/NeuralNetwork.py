@@ -5,7 +5,7 @@ class NeuralNetwork:
         self.initialize()
 
     def initialize(self):
-        self.input_size = 5
+        self.input_size = 6
         self.hidden_size = 10  # Cambiado a 10 neuronas
         self.output_size = 3
 

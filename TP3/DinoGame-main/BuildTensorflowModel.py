@@ -117,7 +117,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 # Entrenar el modelo
-model.fit(train_generator, epochs=10, validation_data=validation_generator)
+model.fit(train_generator, epochs=50, validation_data=validation_generator)
 
 # Guardar el modelo
 model.save('tensorflow_nn.h5')
